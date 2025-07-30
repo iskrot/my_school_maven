@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.service.AvatarService;
+import ru.hogwarts.school.service.FacultyService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @RestController
 public class AvatarController {
-    private AvatarService avatarService;
+    private AvatarSer avatarService;
 
     public AvatarController(AvatarService avatarService) {
         this.avatarService = avatarService;

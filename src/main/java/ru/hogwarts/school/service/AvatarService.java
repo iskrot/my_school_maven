@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,16 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 @Transactional
 public class AvatarService {
+
+    private Logger logger = LoggerFactory.getLogger(.class);
+
     private AvatarRepository avatarRepository;
     private StudentService studentService;
 
@@ -64,19 +70,28 @@ public class AvatarService {
     }
 
     public Avatar getById(long id) {
+        logger.info("start method getById");
         if (avatarRepository.findAll().stream().map(i -> i.getId()).toList().contains(id)) {
-            return avatarRepository.findById(id).get();
+            Avatar avatar = avatarRepository.findById(id).get();
+            logger.info("method getById return: "+avatar);
+            return avatar;
         }
+        logger.info("method getById return: null");
         return null;
     }
 
     public List<Avatar> getAll(Integer size, Integer number) {
+        logger.info("start method getAll(Integer size, Integer number)");
         PageRequest pageRequest = PageRequest.of(number-1, size);
-        return avatarRepository.findAll(pageRequest).getContent();
+        List<Avatar> result = avatarRepository.findAll(pageRequest).getContent();
+        logger.info("method getAll return: "+result);
+        return result;
     }
 
     public List<Avatar> getAll(){
-        return avatarRepository.findAll();
+        logger.info("start method getAll");
+        return  avatarRepository.findAll();
+
     }
 
     public void put(Avatar avatar) {
