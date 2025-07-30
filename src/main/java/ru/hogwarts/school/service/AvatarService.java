@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.logging.Logger;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -31,7 +31,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Transactional
 public class AvatarService {
 
-    private Logger logger = LoggerFactory.getLogger(.class);
+    private Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
     private AvatarRepository avatarRepository;
     private StudentService studentService;
@@ -52,10 +52,10 @@ public class AvatarService {
         Files.deleteIfExists(filePath);
 
         try (
-             InputStream is = file.getInputStream();
-             OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-             BufferedInputStream bis = new BufferedInputStream(is, 1024);
-             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
+                InputStream is = file.getInputStream();
+                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
         ){
             bis.transferTo(bos);
         }
@@ -72,40 +72,42 @@ public class AvatarService {
     public Avatar getById(long id) {
         logger.info("start method getById");
         if (avatarRepository.findAll().stream().map(i -> i.getId()).toList().contains(id)) {
-            Avatar avatar = avatarRepository.findById(id).get();
-            logger.info("method getById return: "+avatar);
-            return avatar;
+            return  avatarRepository.findById(id).get();
+
         }
-        logger.info("method getById return: null");
         return null;
     }
 
     public List<Avatar> getAll(Integer size, Integer number) {
         logger.info("start method getAll(Integer size, Integer number)");
         PageRequest pageRequest = PageRequest.of(number-1, size);
-        List<Avatar> result = avatarRepository.findAll(pageRequest).getContent();
-        logger.info("method getAll return: "+result);
-        return result;
+        return avatarRepository.findAll(pageRequest).getContent();
     }
 
     public List<Avatar> getAll(){
         logger.info("start method getAll");
-        return  avatarRepository.findAll();
-
+        return avatarRepository.findAll();
     }
 
     public void put(Avatar avatar) {
+        logger.info("start method put");
         if (!avatarRepository.findAll().stream().map(i -> i.getId()).toList().contains(avatar.getId())) {
             avatarRepository.save(avatar);
+            logger.info("method put save: "+avatar);
+        }
+        else {
+            logger.debug("method put don't save: "+avatar);
         }
     }
 
     public void remove(Long id) {
+        logger.info("start method remove");
         avatarRepository.deleteById(id);
     }
 
 
     public String getAvatarsDir() {
+        logger.info("start method getAvatarDir");
         return avatarsDir;
     }
 

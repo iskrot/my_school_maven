@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 public class AvatarController {
-    private AvatarSer avatarService;
+    private AvatarService avatarService;
 
     public AvatarController(AvatarService avatarService) {
         this.avatarService = avatarService;
