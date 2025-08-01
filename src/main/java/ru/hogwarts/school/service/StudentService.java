@@ -13,7 +13,7 @@ import java.util.Collection;
 
 public class StudentService {
 
-    private Logger logger = LoggerFactory.getLogger(StudentService.class);
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
     private final StudentRepository studentRepositories;
 
     @Autowired
