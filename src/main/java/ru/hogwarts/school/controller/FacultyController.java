@@ -51,7 +51,10 @@ public class FacultyController {
         return  facultyService.get(id).getStudents();
     }
 
-
+    @GetMapping("/longFacultyName")
+    public Faculty longFacultyName(){
+        return facultyService.LOngFacultyName();
+    }
 
     @PutMapping
     public Faculty putFaculty(@RequestBody Faculty faculty){
