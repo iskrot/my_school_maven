@@ -71,4 +71,18 @@ public class StudentService {
         logger.info("start method getLastFiveStudent");
         return studentRepositories.getLastFiveStudent();
     }
+
+    public Collection<String> getAllNames() {
+        logger.info("start method getAllName");
+        return studentRepositories.findAll().stream().parallel().map(i -> i.getName()).sorted().toList();
+    }
+
+    public int getMedianAge() {
+        logger.info("start method getMedianAge");
+        return (int) studentRepositories.findAll().stream()
+                .map(i -> i.getAge())
+                .mapToInt(Integer::intValue)
+                .average()
+                .getAsDouble();
+    }
 }
