@@ -76,6 +76,7 @@ public class FacultyService {
     }
 
 
-
-
+    public Faculty LOngFacultyName() {
+        return facultyRepository.findAll().stream().sorted((a, b) -> b.getName().length()-a.getName().length()).toList().get(0);
+    }
 }

@@ -70,6 +70,16 @@ public class StudentController {
         return studentService.getLastFiveStudent();
     }
 
+    @GetMapping("/getAllNameStudent")
+    public Collection<String> getAllNameStudent(){
+        return studentService.getAllNames();
+    }
+
+    @GetMapping("/getMedianAge")
+    public int getMedianAge(){
+        return studentService.getMedianAge();
+    }
+
 
     @PutMapping
     public Student putStudent(@RequestBody Student student) {
