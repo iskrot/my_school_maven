@@ -80,6 +80,16 @@ public class StudentController {
         return studentService.getMedianAge();
     }
 
+    @GetMapping("/students/print-parallel")
+    public void studentParallelsPrint(){
+        studentService.studentParallelsPrint();
+    }
+
+    @GetMapping("/students/print-synchronized")
+    public void studentSynchronizedParallelsPrint(){
+        studentService.studentSynchronizedParallelsPrint();
+    }
+
 
     @PutMapping
     public Student putStudent(@RequestBody Student student) {

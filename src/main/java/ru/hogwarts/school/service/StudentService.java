@@ -3,11 +3,13 @@ package ru.hogwarts.school.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositories.StudentRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 
@@ -84,5 +86,43 @@ public class StudentService {
                 .mapToInt(Integer::intValue)
                 .average()
                 .getAsDouble();
+    }
+
+    public void studentParallelsPrint() {
+        PageRequest pageRequest = PageRequest.of(0, 6);
+        List<Student> list = studentRepositories.findAll(pageRequest).getContent();
+
+        System.out.println(list.get(0));
+        System.out.println(list.get(1));
+
+        new Thread(()-> {
+            System.out.println(list.get(2));
+            System.out.println(list.get(3));
+        }).start();
+        new Thread(()-> {
+            System.out.println(list.get(4));
+            System.out.println(list.get(5));
+        }).start();
+    }
+    private synchronized void print(Student x){
+        System.out.println(x);
+    }
+
+    public void studentSynchronizedParallelsPrint() {
+
+        PageRequest pageRequest = PageRequest.of(0, 6);
+        List<Student> list = studentRepositories.findAll(pageRequest).getContent();
+
+        print(list.get(0));
+        print(list.get(1));
+
+        new Thread(()-> {
+            print(list.get(2));
+            print(list.get(3));
+        }).start();
+        new Thread(()-> {
+            print(list.get(4));
+            print(list.get(5));
+        }).start();
     }
 }
