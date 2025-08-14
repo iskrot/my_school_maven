@@ -4,6 +4,7 @@ package ru.hogwarts.school.controller;
 import org.assertj.core.api.Assertions;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repositories.FacultyRepository;
 import ru.hogwarts.school.repositories.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 
@@ -53,6 +55,12 @@ public class StudentControllerTest {
 
     @Autowired
     private FacultyController facultyController;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private FacultyRepository facultyRepository;
 
     @Test
     void initTest() {
@@ -82,9 +90,6 @@ public class StudentControllerTest {
 
         Assertions.assertThat(restTemplate.getForObject("http://localhost:" + port + "/student?age=2", Student[].class)).isEqualTo(list.stream().filter(i -> i.getAge() == 2).toList().toArray());
 
-        for (Student i : list) {
-            studentController.deleteStudent(i.getId());
-        }
     }
 
     @Test
@@ -97,9 +102,6 @@ public class StudentControllerTest {
 
         Assertions.assertThat(restTemplate.getForObject("http://localhost:" + port + "/student/getMinToMax?min=2&max=3", Student[].class)).isEqualTo(list.stream().filter(i -> 2 <= i.getAge() & i.getAge() <= 3).toList().toArray());
 
-        for (Student i : list) {
-            studentController.deleteStudent(i.getId());
-        }
     }
 
     @Test
@@ -110,8 +112,6 @@ public class StudentControllerTest {
 
         Assertions.assertThat(restTemplate.getForObject("http://localhost:" + port + "/student/"+student.getId()+"/getFaculty", Faculty.class)).isEqualTo(faculty);
 
-        studentController.deleteStudent(student.getId());
-        facultyController.deleteFaculty(faculty.getId());
 
     }
 
@@ -123,6 +123,19 @@ public class StudentControllerTest {
     @Test
     void studentSynchronizedParallelsPrint(){
         Assertions.assertThat(restTemplate.getForEntity("http://localhost:" + port + "/students/print-synchronized", Object.class).getStatusCode().equals(HttpStatusCode.valueOf(200)));
+    }
+
+    @AfterEach
+    void clear(){
+        List<Student> list1 = new ArrayList<>(studentRepository.findByName("1"));
+        List<Student> list2 = new ArrayList<>(studentRepository.findByName("2"));
+        list1.addAll(list2);
+        for (Student i : list1){
+            if (i.getFaculty() != null){
+                facultyRepository.deleteById(i.getFaculty().getId());
+            }
+            studentRepository.deleteById(i.getId());
+        }
     }
 
 }
